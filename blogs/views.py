@@ -11,8 +11,8 @@ class PostListView(ListView):
     def get_queryset(self):
         if self.kwargs.get('cat'):
             return Post.objects.filter(category__name=self.kwargs.get('cat'))
-        elif self.kwargs.get('author'):
-            return Post.objects.filter(client__email = self.kwargs.get('author'))
+        elif self.kwargs.get('username'):
+            return Post.objects.filter(client__username = self.kwargs.get('username'))
         elif self.request.GET.get('search'):
             return Post.objects.filter(content__contains = self.request.GET.get('search'))
         else:
