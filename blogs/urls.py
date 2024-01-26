@@ -6,10 +6,9 @@ app_name = 'blog'
 
 
 urlpatterns = [
-    path('', blog_home , name= 'blog_home'),
-    path('post_details/<int:pid>', blog_single , name='blog_single'),
-    path('author/<str:username>', blog_home , name= 'blog_home_with_username'),
-    path('category/<str:cat>', blog_home , name= 'blog_home_with_category'),
-    path('search/', blog_home , name= 'blog_home_with_search'),
-    path('add/', add , name='add'),
+    path('', PostListView.as_view() , name= 'blog_home'),
+    path('post_details/<int:pk>', PostDetailView.as_view() , name='blog_single'),
+    path('author/<str:username>', PostListView.as_view() , name= 'blog_home_with_username'),
+    path('category/<str:cat>', PostListView.as_view() , name= 'blog_home_with_category'),
+    path('search/', PostListView.as_view() , name= 'blog_home_with_search'),
 ]

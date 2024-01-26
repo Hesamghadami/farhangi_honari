@@ -1,62 +1,50 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from .forms import *
-from .models import CustumUser
-from django.http import HttpResponseRedirect
-
-
-
-
-def Login(req) :
-    if req.user.is_authenticated:
-        return redirect('/')
-    
-    elif req.method == 'GET':
-        form = AuthenticationForm()
-        captcha = CaptchaForm()
-        return render(req, 'registration/login.html', {'form': form, 'captcha': captcha})
-    
-    elif req.method == 'POST':
-        captcha = CaptchaForm(req.POST)
-        if captcha.is_valid():
-            username = req.POST.get('username')
-            password = req.POST.get('password')
-            user = authenticate(username=username,password=password)
-            if user is not None:
-                login(req, user)
-                return redirect('/')
-            else :
-                messages.add_message(req, messages.ERROR , 'username or password is not valid ! ...')
-                return redirect('accounts:login')
-        else : 
-            messages.add_message(req, messages.ERROR , 'captcha not valid')
-            return redirect('accounts:login')
-
-@login_required
-def Logout(req) :
-    logout(req)
-    return redirect('/')
-
-
-
-def signup(req):
-    if req.method == 'GET':
-        form = SignUpForm()
-        return render(req, 'registration/signup.html', {'form': form})
-    
-    elif req.method == 'POST':
-            form = SignUpForm(req.POST, req.FILES)
-            print (req.POST)
-            if form.is_valid():
-                form.save()
-                return redirect('accounts:login')
-        
-            else:
-                messages.add_message(req,messages.ERROR,'Input data is not valid.')
-                return redirect('accounts:login')
+from .forms import AuthenticationForm
+from django.views.generic import FormView, CreateView, TemplateView
+from .forms import CustomUserCreation
 
         
 # Create your views here.
+
+
+class LoginView(FormView):
+     template_name = 'registration/login.html'
+     form_class = AuthenticationForm
+     success_url = '/'
+
+     def form_valid(self, form):
+         email = self.request.POST.get('email')
+         password = self.request.POST.get('password')
+         user = authenticate(email=email, password=password)
+         if user is not None:
+              login(self.request, user)
+              return super().form_valid(form)
+         
+
+class LogOutView(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('/')
+
+
+
+class SignUpView(CreateView):
+     template_name = 'registration/signup.html'
+     form_class = CustomUserCreation
+     success_url = '/accounts/login/' #'registration/login' 
+
+     def form_valid(self, form):
+        form.save()
+        email = self.request.POST.get('email')
+        password = self.request.POST.get('password1')   
+        user = authenticate(email=email, password=password)
+        if user is not None:
+            login(self.request,user)
+            return redirect('/')
+        
+     def form_invalid(self, form):
+        messages.add_message(self.request, messages.ERROR, 'Invalid email or password')
+        return super().form_invalid(form)

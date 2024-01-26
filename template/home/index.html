@@ -166,23 +166,7 @@
       </div>
     </section><!-- End Skills Section -->
 
- 
-    <!-- ======= Cta Section ======= -->
-    <section id="cta" class="cta">
-      <div class="container" data-aos="zoom-in">
 
-        <div class="row">
-          <div class="col-lg-9 text-center text-lg-start">
-            <h3>Call To Action</h3>
-            <p> Wanna be one of our merchants? So post your stuff on our website.</p>
-          </div>
-          <div class="col-lg-3 cta-btn-container text-center">
-            <a class="cta-btn align-middle" href="{% url 'blog:add' %}">Call To Action</a>
-          </div>
-        </div>
-
-      </div>
-    </section><!-- End Cta Section -->
 
     <!-- ======= Portfolio Section ======= -->
     <section id="portfolio" class="portfolio">
@@ -211,7 +195,7 @@
                 <p><a href="{% url 'blog:blog_home_with_category' cat=cat.name %}">{{cat.name}}</a></p>
                 {% endfor %}
                 <a href={{post.image1.url}} data-gallery="portfolioGallery" class="portfolio-lightbox preview-link" title=""><i class="bx bx-plus"></i></a>
-                <a href="{% url 'blog:blog_single' pid=post.id %}" class="details-link" title="More Details"><i class="bx bx-link"></i></a>
+                <a href="{% url 'blog:blog_single' pk=post.id %}" class="details-link" title="More Details"><i class="bx bx-link"></i></a>
               </div>
             </div>
           {% endfor %}
